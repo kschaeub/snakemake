@@ -2078,11 +2078,13 @@ def args_to_api(args, parser):
 
     executor_plugin = ExecutorPluginRegistry().get_plugin(args.executor)
     executor_settings = executor_plugin.get_settings(args)
+    print(f"Using executor plugin '{executor_plugin.name}' for execution \n with settings: {executor_settings}")
 
     storage_provider_settings = {
         name: StoragePluginRegistry().get_plugin(name).get_settings(args)
         for name in StoragePluginRegistry().get_registered_plugins()
     }
+    print(f"Storage provider settings: {storage_provider_settings}")
 
     log_handler_settings = {
         name: LoggerPluginRegistry().get_plugin(name).get_settings(args)
@@ -2131,6 +2133,8 @@ def args_to_api(args, parser):
             deployment_method.add(DeploymentMethod.ENV_MODULES)
 
         try:
+            print("Storage settings")
+
             storage_settings = StorageSettings(
                 default_storage_provider=args.default_storage_provider,
                 default_storage_prefix=args.default_storage_prefix,
@@ -2155,6 +2159,8 @@ def args_to_api(args, parser):
                     storage_provider_settings=storage_provider_settings,
                 )
             else:
+                print("Initializing workflow with snakemake API")
+                print("Deployment method:", deployment_method)
                 workflow_api = snakemake_api.workflow(
                     resource_settings=ResourceSettings(
                         cores=args.cores,

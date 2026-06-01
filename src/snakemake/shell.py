@@ -317,6 +317,7 @@ class shell:
                 argvquote(cmd),
             )
 
+        print(f"Passing this env to the subprocess: {envvars}")
         proc = sp.Popen(
             cmd,
             bufsize=-1,
