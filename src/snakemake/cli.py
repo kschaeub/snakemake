@@ -2085,6 +2085,15 @@ def args_to_api(args, parser):
         for name in StoragePluginRegistry().get_registered_plugins()
     }
     print(f"Storage provider settings: {storage_provider_settings}")
+    for prov_name, prov_settings in storage_provider_settings.items():
+        # prov_settings may be a TaggedSettings or a plain settings dataclass
+        if hasattr(prov_settings, "get_settings"):
+            settings = prov_settings.get_settings()
+        else:
+            settings = prov_settings
+        proto = getattr(settings, "protocol", None)
+        print(f"Used protocol for {prov_name}: {proto}")
+    print("env used by XRootD protocol:", os.environ.get("XrdSecPROTOCOL"))
 
     log_handler_settings = {
         name: LoggerPluginRegistry().get_plugin(name).get_settings(args)
